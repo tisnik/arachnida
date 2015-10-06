@@ -61,7 +61,7 @@
 (defn get-commits-stat-for-all-branches
     [repo directory-name]
     (let [branches (get-local-branches repo)]
-        (apply conj
+        (reduce conj
             (for [branch branches]
                  (get-commits-stat-for-branch directory-name branch)))))
 
