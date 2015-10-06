@@ -16,6 +16,7 @@ create table repos (
 
 create table commits (
     id            integer primary key asc,
+    product       integer, -- foreign key to products
     repo          integer, -- foreign key to repos
     branch        text,
     sha           text,
