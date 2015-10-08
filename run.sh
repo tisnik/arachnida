@@ -1,4 +1,4 @@
 #!/bin/sh
 
-lein run
+lein run -- $1 $2 $3 $4 $5
 
