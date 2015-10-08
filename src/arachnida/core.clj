@@ -2,23 +2,10 @@
 
 (require '[clojure.tools.cli      :as cli])
 
-(require '[clojure.java.jdbc :as jdbc])
-
-(require '[clojure.pprint     :as pprint])
-
-(require '[hozumi.rm-rf       :as rm-rf])
-
-(require '[ring.adapter.jetty      :as jetty])
-(require '[ring.middleware.params  :as http-params])
-(require '[ring.util.response      :as http-response])
-(require '[ring.middleware.cookies :as cookies])
-
-(require '[hiccup.page :as page])
-(require '[hiccup.form :as form])
-
-(require '[arachnida.db-spec       :as db-spec])
-(require '[arachnida.db-interface  :as db-interface])
-(require '[arachnida.git-data-fetcher  :as git-data-fetcher])
+(require '[arachnida.db-spec          :as db-spec])
+(require '[arachnida.db-interface     :as db-interface])
+(require '[arachnida.git-data-fetcher :as git-data-fetcher])
+(require '[arachnida.server           :as server])
 
 (def cli-options
   [["-h" "--help"    "help"                   :id :help]
@@ -37,10 +24,6 @@
     (println "Unknown command line option!")
     (show-help))
 
-(defn start-server
-    []
-    )
-
 (defn -main
     [& args]
     (let [all-options           (cli/parse-opts args cli-options)
@@ -50,6 +33,6 @@
           server?               (options :server)]
         (cond show-help? (show-help)
               git?       (git-data-fetcher/process)
-              server?    (start-server)
+              server?    (server/start-server)
               :else      (show-error))))
 
