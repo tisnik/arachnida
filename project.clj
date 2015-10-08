@@ -16,5 +16,5 @@
     :plugins [[lein-ring "0.8.10"]]
     :main ^:skip-aot arachnida.core
     :target-path "target/%s"
-    :ring {:handler gitt.core/app}
+    :ring {:handler arachnida.server/app}
     :profiles {:uberjar {:aot :all}})
