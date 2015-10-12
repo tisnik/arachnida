@@ -39,11 +39,28 @@
         (println "        Fetching all branches: " dirname)
         (git-interface/fetch-all (repo-url->directory-name repository))))
 
-
 (defn insert-changed-files
     [db commit-id changed-files]
     (doseq [changed-file changed-files]
         (db-interface/insert-changed-file db commit-id changed-file)))
+
+(defn insert-branch-for-commit
+    [transaction commit-id branch]
+    (let [branch-name (commits-stat/update-branch-name branch)]
+         (db-interface/insert-branch-for-commit transaction commit-id branch-name)))
+
+(defn insert-branches-for-commit
+    [transaction commit-id branches]
+    (doseq [branch branches]
+        (insert-branch-for-commit transaction commit-id branch)))
+
+(defn insert-changed-files-and-branches
+    [transaction product repository commit-sha changed-files branches]
+    (let [commit-id (db-interface/read-commit-id transaction (:id product) (:id repository) commit-sha)]
+                    (if (not commit-id)
+                        (println "Warning: no ID for commit " commit-sha))
+                    (insert-changed-files transaction commit-id changed-files)
+                    (insert-branches-for-commit transaction commit-id branches)))
 
 (defn revision-list
     [product repository repo commits-stat]
@@ -62,13 +79,12 @@
                   files-changed (or (:files-changed stat) 0)
                   insertions    (or (:insertions stat) 0)
                   deletions     (or (:deletions stat) 0)]
-                (doseq [branch branches]
-                    (let [branch-name (commits-stat/update-branch-name branch)]
-                        (db-interface/insert-commit transaction (:id product) (:id repository)
-                                               branch-name commit-sha message
-                                               author date files-changed insertions deletions)
-                        (insert-changed-files transaction
-                                    (db-interface/read-commit-id transaction (:id product) (:id repository) branch-name commit-sha) changed-files)))
+                  (if (not stat)
+                      (println "Warning: no stat info for commit " commit-sha "(" author message date branches ")"))
+                  (db-interface/insert-commit transaction (:id product) (:id repository)
+                                              commit-sha message
+                                              author date files-changed insertions deletions)
+                  (insert-changed-files-and-branches transaction product repository commit-sha changed-files branches)
              )))))
 
 (defn process-repository
