@@ -92,7 +92,7 @@
     (jdbc/query db-spec/data-db ["select id,
                                          (select name from products where products.id=commits.product) as product,
                                          (select name from repos where repos.id=commits.repo) as repo,
-                                         sha, branch, message, date
+                                         sha, message, date
                                   from commits
                                   where date between ? and ? and author=?
                                   order by product, repo, date" first-day last-day author]))
@@ -101,4 +101,9 @@
     [commit-id]
     (if commit-id
         (jdbc/query db-spec/data-db ["select * from changed_files where commit_id=?" commit-id])))
+
+(defn read-branches-for-commit
+    [commit-id]
+    (if commit-id
+        (jdbc/query db-spec/data-db ["select * from branches_for_commit where commit_id=?" commit-id])))
 

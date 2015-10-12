@@ -34,14 +34,23 @@
              :commits-count 0
              :files-changed 0}))
 
+(defn read-branches-per-commit
+    [commits]
+    (zipmap (for [commit commits] (:id commit))
+            (for [commit commits] (db-interface/read-branches-for-commit (:id commit)))))
+
 (defn read-stat-for-week
     [week author]
     (if (and week author)
         (let [calendar  (calendar/get-calendar-for-week 2015 (Integer. week))
               first-day (calendar/get-first-day-of-week-formatted calendar)
               last-day  (calendar/get-last-day-of-week-formatted calendar)]
-              {:statistic-for-week (db-interface/read-statistic-for-week-from-db first-day last-day author)
-               :commits-for-week   (db-interface/read-commits-for-week first-day last-day author)})))
+              (let [statistic-for-week  (db-interface/read-statistic-for-week-from-db first-day last-day author)
+                    commits-for-week    (db-interface/read-commits-for-week first-day last-day author)
+                    branches-per-commit (read-branches-per-commit commits-for-week)]
+                   {:statistic-for-week  statistic-for-week
+                    :commits-for-week    commits-for-week
+                    :branches-per-commit branches-per-commit}))))
 
 (defn file-operation
     [operation]
@@ -128,6 +137,16 @@
                           },
                           xaxis: {showLabels: true},
                           yaxis: {showLabels: true}, 
+                          mouse: {
+	track: true,
+	position: 'se',
+	margin: 3,
+	color: '#ff3f19',
+	trackDecimals: 1,
+	radius: 3,
+	sensibility: 2
+},
+                          //bars: {show:true},
                           legend:{
                               show: true,
                               position: 'ne',
@@ -187,7 +206,8 @@
                     [:tr (if (= (str (:id s)) commit-id) {:style "background-color:yellow"})
                          [:td (:product s)]
                          [:td (:repo s)]
-                         [:td (:branch s)]
+                         [:td (for [branch (get (:branches-per-commit stat-for-week) (:id s))]
+                                  (str (:branch branch) "<br/>"))]
                          [:td (:date s)]
                          [:td [:a {:href (str "?author=" selected-author "&week=" selected-week "&commit-id=" (:id s))} (:sha s)]]
                          [:td (:message s)]
@@ -236,12 +256,12 @@
           stat-for-week   (read-stat-for-week selected-week selected-author)
           commit-info     (db-interface/read-commit-info commit-id)
           ]
-          (println "Author:" selected-author)
-          (println "Authors:" authors)
-          (println "Weeks: " weeks-stat)
+        ;  (println "Author:" selected-author)
+        ;  (println "Authors:" authors)
+        ;  (println "Weeks: " weeks-stat)
           (println "Stat4week " stat-for-week)
-          (println "Commit ID: " commit-id)
-          (println "Commit info " commit-info)
+        ;  (println "Commit ID: " commit-id)
+         ; (println "Commit info " commit-info)
         (let [response (generate-response authors selected-author weeks-stat selected-week stat-for-week commit-id commit-info)]
               (println "Outgoing cookies: " (get response :cookies))
               response)))
