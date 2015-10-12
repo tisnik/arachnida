@@ -16,11 +16,11 @@
                                   where  product=? order by id;" product-id]))
 
 (defn read-commit-id
-    [db product repo branch sha]
+    [db product repo sha]
     (:id
     (first
-        (jdbc/query db ["select id from commits where product=? and repo=? and branch=? and sha=?"
-                             product repo branch sha]))))
+        (jdbc/query db ["select id from commits where product=? and repo=? and sha=?"
+                             product repo sha]))))
 
 (defn insert-changed-file
     [db commit-id changed-file]
@@ -28,10 +28,16 @@
                                            :file_name (first changed-file)
                                            :operation (second changed-file)}))
 
+(defn insert-branch-for-commit
+    [db commit-id branch-name]
+    (jdbc/insert! db "branches_for_commit" {:commit_id commit-id
+                                           :branch branch-name}))
+
 (defn insert-commit
-    "Zapis dat do tabulky."
-    [db product repo branch sha message author date files-changed insertions deletions]
-    (jdbc/insert! db "commits" {:product product :repo repo :branch branch
+    "Write informatioun about given commit into database."
+    [db product repo sha message author date files-changed insertions deletions]
+    (jdbc/insert! db "commits" {:product product :repo repo
+                                ;:branch branch ;;; information about branches are stored in the table branches_for_commit
                                 :sha     sha     :message message
                                 :author author   :date date
                                 :files_changed files-changed
