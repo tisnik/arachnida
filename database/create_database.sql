@@ -14,6 +14,12 @@ create table repos (
     url           text
 );
 
+create table branches_for_commit (
+    id            integer primary key asc,
+    commit_id     integer, -- foreign key to commits
+    branch        text
+);
+
 create table commits (
     id            integer primary key asc,
     product       integer, -- foreign key to products
