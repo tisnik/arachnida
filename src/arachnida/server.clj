@@ -55,6 +55,19 @@
     [selected-author week-stat data]
     [:td [:a {:href (str "?author=" selected-author "&week=" (:week week-stat))} data]])
 
+(defn graph-for-authors-data
+    [authors selected-author]
+    (for [author authors]
+         (if (= (:author author) selected-author)
+             (str "{data:[[1," (:commits_count author) "]], label: '" (:author author) "', pie:{explode:20}},\n")
+             (str "{data:[[1," (:commits_count author) "]], label: '" (:author author) "'},\n"))))
+
+(defn graph-for-weeks-stat
+    [weeks-stat who what label]
+    (str "{data:["
+        (apply str (for [week-stat weeks-stat]
+            (str "[" (:week week-stat) "," (get (get week-stat who) what) "],"))) "], label: '" label "'}"))
+
 (defn create-html-page
     [authors selected-author weeks-stat selected-week stat-for-week commit-id commit-info]
     (page/xhtml
@@ -62,6 +75,10 @@
             [:title "Stats"]
             [:meta {:name "Generator" :content "Clojure"}]
             [:meta {:http-equiv "Content-type" :content "text/html; charset=utf-8"}]
+            [:script {:type "text/javascript" :src "http://10.34.3.139/flotr/lib/prototype-1.6.0.2.js"}]
+            [:script {:type "text/javascript" :src "http://10.34.3.139/flotr/lib/canvas2image.js"}]
+            [:script {:type "text/javascript" :src "http://10.34.3.139/flotr/lib/canvastext.js"}]
+            [:script {:type "text/javascript" :src "http://10.34.3.139/flotr/flotr.debug-0.2.0-alpha.js"}]
         ]
         [:body
             [:h1 "Authors"]
@@ -75,6 +92,48 @@
                         [:td (:insertions author)]
                         [:td (:deletions author)]
                     ])
+                ]
+                [:div {:id "authors-graph" :style "width:500px;height:500px"}
+                    [:script {:type "text/javascript"}
+                    "var f = Flotr.draw($('authors-graph'), ["
+                          (graph-for-authors-data authors selected-author)
+                          "], {
+                          HtmlText: false, 
+                          grid: {
+                              verticalLines:   true, 
+                              horizontalLines: true
+                          },
+                          xaxis: {showLabels: false},
+                          yaxis: {showLabels: false}, 
+                          pie: {show: true, explode: 5},
+                          legend:{
+                              show: true,
+                              position: 'ne',
+                              backgroundColor: '#D2E8FF',
+                          }});"
+                    ]
+                ]
+                [:div {:id "weeks-stat" :style "width:900px;height:400px"}
+                    [:script {:type "text/javascript"}
+                    "var f = Flotr.draw($('weeks-stat'), ["
+                          (graph-for-weeks-stat weeks-stat :stat-for-all :commits-count "Commits (all)") ","
+                          (graph-for-weeks-stat weeks-stat :stat-for-author :commits-count "Commits (author)") ","
+                          (graph-for-weeks-stat weeks-stat :stat-for-all :files-changed "Files changed (all)") ","
+                          (graph-for-weeks-stat weeks-stat :stat-for-author :files-changed "Files changed (author)")
+                          "], {
+                          HtmlText: false, 
+                          grid: {
+                              verticalLines:   true, 
+                              horizontalLines: true
+                          },
+                          xaxis: {showLabels: true},
+                          yaxis: {showLabels: true}, 
+                          legend:{
+                              show: true,
+                              position: 'ne',
+                              backgroundColor: '#D2E8FF',
+                          }});"
+                    ]
                 ]
             [:h1 "Week stat"]
                 [:table {:style "border:2px solid brown"}
