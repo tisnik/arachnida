@@ -93,7 +93,7 @@
     (println (str "    Repository '" (:name repository) "' with ID: " (:id repository)))
     (println "        Repo ID:" (:id repository))
     (println "        Repo URL" (:url repository))
-    ;(prepare-local-repository repository)
+    (prepare-local-repository repository)
     (let [directory-name (repo-url->directory-name repository)]
         (try (jgit/with-repo directory-name
             (let [commits-stat (commits-stat/get-commits-stat-for-all-branches repo directory-name)]
