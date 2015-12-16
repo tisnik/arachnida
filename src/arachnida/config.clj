@@ -2,8 +2,11 @@
 
 (require '[clojure-ini.core :as clojure-ini])
 
+(def repositories-ini-file
+    "config/repositories.ini")
+
 (defn load-repositories
     "Load repositories from the provided INI file."
-    [ini-file-name]
-    (clojure-ini/read-ini ini-file-name :keywordize? true))
+    []
+    (clojure-ini/read-ini repositories-ini-file :keywordize? true))
 
