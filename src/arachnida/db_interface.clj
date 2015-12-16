@@ -26,6 +26,11 @@
     [db product-name]
     (jdbc/insert! db "products" {:name product-name}))
 
+(defn insert-repository
+    [db product-name repository-name repository-url]
+    (let [product-id (first (jdbc/query db ["select id from products where name=?;" product-name]))]
+        (jdbc/insert! db "repos" {:product (:id product-id) :name repository-name :url repository-url})))
+
 (defn insert-changed-file
     [db commit-id changed-file]
     (jdbc/insert! db "changed_files" {:commit_id commit-id
