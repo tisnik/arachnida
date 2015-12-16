@@ -26,11 +26,11 @@
 
 (defn -main
     [& args]
-    (let [all-options           (cli/parse-opts args cli-options)
-          options               (all-options :options)
-          show-help?            (options :help)
-          git?                  (options :git)
-          server?               (options :server)]
+    (let [all-options    (cli/parse-opts args cli-options)
+          options        (all-options :options)
+          show-help?     (options :help)
+          git?           (options :git)
+          server?        (options :server)]
         (cond show-help? (show-help)
               git?       (git-data-fetcher/process)
               server?    (server/start-server)
