@@ -14,6 +14,7 @@
 (require '[arachnida.db-interface  :as db-interface])
 (require '[arachnida.git-interface :as git-interface])
 (require '[arachnida.commits-stat  :as commits-stat])
+(require '[arachnida.config        :as config])
 
 (defn repo-url->directory-name
     "Prepares local directory name from repository URL."
@@ -110,8 +111,30 @@
         (doseq [repository repolist]
             (process-repository product repository))))
 
+(defn write-repositories-for-product-into-db
+    [product-name repositories]
+    (doseq [repository repositories]
+        (let [repository-name (name (key repository))
+              repository-url  (val repository)]
+              (println "        " repository-name)
+              (println "            [" repository-url "]")
+              (db-interface/insert-repository db-spec/data-db product-name repository-name repository-url))))
+
+(defn write-products-and-repositories-into-db
+    [products-and-repositories]
+    (println "Writing products and repositories into database")
+    (doseq [product products-and-repositories]
+        (let [product-name (name (key product))
+              repositories (val product)]
+              (println "    " product-name)
+              (db-interface/insert-product db-spec/data-db product-name)
+              (write-repositories-for-product-into-db product-name repositories)))
+    (println "Done"))
+
 (defn process
     []
+    (let [products-and-repositories (config/load-repositories)]
+        (write-products-and-repositories-into-db products-and-repositories))
     (let [products (db-interface/read-product-list)]
         (doseq [product products]
             (process-product product))))
