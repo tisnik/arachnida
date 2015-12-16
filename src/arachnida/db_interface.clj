@@ -9,6 +9,12 @@
                                   from   products
                                   order  by id;"))
 
+(defn read-product-names
+    []
+    (jdbc/query db-spec/data-db  "select name
+                                  from   products
+                                  order  by name;"))
+
 (defn read-repo-list
     [product-id]
     (jdbc/query db-spec/data-db ["select id, name, url
