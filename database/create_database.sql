@@ -1,7 +1,9 @@
---drop table products;
---drop table repos;
---drop table gitlog;
-
+drop table products;
+drop table repos;
+drop table branches_for_commit;
+drop table commits;
+drop table changed_files;
+ 
 create table products (
     id            integer primary key asc,
     name          text
@@ -40,11 +42,4 @@ create table changed_files (
     file_name     text,
     operation     text
 );
-
-insert into products(name) values('Product #1');
-insert into products(name) values('Product #2');
-
-insert into repos(product, name, url) values ((select id from products where name='Product #1'), 'repo#1', 'git@github.com:tisnik/testrepo.git');
-insert into repos(product, name, url) values ((select id from products where name='Product #1'), 'repo#2', 'git@github.com:tisnik/testrepo.ggithub.com:tisnik/testrepo.git');
-insert into repos(product, name, url) values ((select id from products where name='Product #2'), 'repo#1', 'git@github.com:tisnik/testrepo.ggithub.com:tisnik/testrepo.git');
 
