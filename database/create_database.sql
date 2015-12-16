@@ -1,9 +1,10 @@
-drop table products;
-drop table repos;
-drop table branches_for_commit;
-drop table commits;
-drop table changed_files;
- 
+-- We don't have to drop tables because DB is empty at the beginning
+--drop table products;
+--drop table repos;
+--drop table branches_for_commit;
+--drop table commits;
+--drop table changed_files;
+
 create table products (
     id            integer primary key asc,
     name          text
