@@ -12,21 +12,21 @@
         [:meta {:name "Author"    :content "Pavel Tisnovsky"}]
         [:meta {:name "Generator" :content "Clojure"}]
         [:meta {:http-equiv "Content-type" :content "text/html; charset=utf-8"}]
-        (page/include-css "http://10.34.3.139/bootstrap.min.css")
-        (page/include-css "http://10.34.3.139/bootstrap.min.css")
-        (page/include-css "http://10.34.3.139/arachnida.css")
-        (page/include-js  "http://10.34.3.139/bootstrap.min.js")
-        (page/include-js  "http://10.34.3.139/flotr/lib/prototype-1.6.0.2.js")
-        (page/include-js  "http://10.34.3.139/flotr/lib/canvas2image.js")
-        (page/include-js  "http://10.34.3.139/flotr/lib/canvastext.js")
-        (page/include-js  "http://10.34.3.139/flotr/flotr.debug-0.2.0-alpha.js")
+        (page/include-css "bootstrap.min.css")
+        (page/include-css "bootstrap.min.css")
+        (page/include-css "arachnida.css")
+        (page/include-js  "bootstrap.min.js")
+        (page/include-js  "flotr/lib/prototype-1.6.0.2.js")
+        (page/include-js  "flotr/lib/canvas2image.js")
+        (page/include-js  "flotr/lib/canvastext.js")
+        (page/include-js  "flotr/flotr.debug-0.2.0-alpha.js")
     ] ; head
 )
 
 (defn render-html-footer
     "Renders part of HTML page - the footer."
     []
-    [:div (str "<br /><br /><br /><br />Author: Pavel Tisnovsky &lt;<a href='mailto:ptisnovs@redhat.com'>ptisnovs@redhat.com</a>&gt;&nbsp;&nbsp;&nbsp;"
+    [:div (str "<br /><br /><br /><br />Author: Pavel Tisnovsky &lt;&gt;&nbsp;&nbsp;&nbsp;"
           "<br />")])
 
 (defn render-navigation-bar-section
