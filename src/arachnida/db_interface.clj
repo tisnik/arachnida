@@ -22,11 +22,15 @@
         (jdbc/query db ["select id from commits where product=? and repo=? and sha=?"
                              product repo sha]))))
 
+(defn insert-product
+    [db product-name]
+    (jdbc/insert! db "products" {:name product-name}))
+
 (defn insert-changed-file
     [db commit-id changed-file]
     (jdbc/insert! db "changed_files" {:commit_id commit-id
-                                           :file_name (first changed-file)
-                                           :operation (second changed-file)}))
+                                      :file_name (first changed-file)
+                                      :operation (second changed-file)}))
 
 (defn insert-branch-for-commit
     [db commit-id branch-name]
