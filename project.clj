@@ -9,9 +9,10 @@
                    [org.clojure/java.jdbc "0.3.5"]
                    [org.xerial/sqlite-jdbc "3.7.2"]
                    [org.clojure/tools.cli "0.3.1"]
-                   [hiccup "1.0.4"]
                    [ring/ring-core "1.3.2"]
-                   [ring/ring-jetty-adapter "1.3.2"]]
+                   [ring/ring-jetty-adapter "1.3.2"]
+                   [clojure-ini "0.0.1"]
+                   [hiccup "1.0.4"]]
     :dev-dependencies [[lein-ring "0.8.10"]]
     :plugins [[lein-ring "0.8.10"]]
     :main ^:skip-aot arachnida.core
