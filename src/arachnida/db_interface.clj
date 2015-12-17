@@ -118,6 +118,7 @@
 (defn read-statistic-for-week-from-db
     [first-day last-day author]
     (jdbc/query db-spec/data-db ["select repo,
+                                         (select name from repos where repos.id=commits.repo) as reponame,
                                          count(*) as commits,
                                          sum(files_changed) as files,
                                          sum(insertions) as insertions,
