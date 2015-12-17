@@ -87,39 +87,46 @@
             [:div {:class "container"}
                 (render-navigation-bar-section)
                 [:h1 (str "Product: " product-name)]
-                [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
-                    (for [repository repositories]
-                        [:tr
-                            [:td (:name repository)]
-                            [:td (:url  repository)]])
-                ]
-                [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
-                    [:tr [:th {:colspan 2} "Summary for 2015"]]
-                    [:tr [:td "Commits:"]
-                         [:td (:commits_count statistic)]]
-                    [:tr [:td "Insertions:"]
-                         [:td (:insertions statistic)]]
-                    [:tr [:td "Deletions:"]
-                         [:td (:deletions statistic)]]
-                    [:tr [:td "Changed files:"]
-                         [:td (:files_changed statistic)]]
-                ]
-                [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
-                    [:tr [:th {:colspan 5} "Per repository statistic"]]
-                    [:tr [:th "Repository"] [:th {:colspan "4"} "Statistic"]]
-                    [:tr [:th "&nbsp;"]
-                         [:th "Commits"]
-                         [:th "Files"]
-                         [:th "Insertions"]
-                         [:th "Deletions"]]
-                    (for [pr product-repo]
-                        [:tr [:td (:reponame pr)]
-                             [:td (:commits_count pr)]
-                             [:td (:files_changed pr)]
-                             [:td (:insertions pr)]
-                             [:td (:deletions pr)]
-                        ]
-                    )]
+                [:div {:class "panel panel-primary"}
+                    [:div {:class "panel-heading"}
+                        "Repositories"]
+                    [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
+                        (for [repository repositories]
+                            [:tr
+                                [:td (:name repository)]
+                                [:td (:url  repository)]])
+                    ]]
+                [:div {:class "panel panel-primary"}
+                    [:div {:class "panel-heading"}
+                        "Summary for 2015"]
+                    [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
+                        [:tr [:td "Commits:"]
+                             [:td (:commits_count statistic)]]
+                        [:tr [:td "Insertions:"]
+                             [:td (:insertions statistic)]]
+                        [:tr [:td "Deletions:"]
+                             [:td (:deletions statistic)]]
+                        [:tr [:td "Changed files:"]
+                             [:td (:files_changed statistic)]]
+                    ]]
+                [:div {:class "panel panel-primary"}
+                    [:div {:class "panel-heading"}
+                        "Per repository statistic"]
+                    [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
+                        [:tr [:th "Repository"] [:th {:colspan "4"} "Statistic"]]
+                        [:tr [:th "&nbsp;"]
+                             [:th "Commits"]
+                             [:th "Files"]
+                             [:th "Insertions"]
+                             [:th "Deletions"]]
+                        (for [pr product-repo]
+                            [:tr [:td (:reponame pr)]
+                                 [:td (:commits_count pr)]
+                                 [:td (:files_changed pr)]
+                                 [:td (:insertions pr)]
+                                 [:td (:deletions pr)]
+                            ]
+                        )]]
                 [:br][:br][:br][:br]
                 (render-html-footer)
             ] ; </div class="container">
@@ -138,17 +145,19 @@
             [:div {:class "container"}
                 (render-navigation-bar-section)
                 [:h1 (str "Author: " author-name)]
-                [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
-                    [:tr [:th {:colspan 2} "Summary for 2015"]]
-                    [:tr [:td "Commits:"]
-                         [:td (:commits_count statistic)]]
-                    [:tr [:td "Insertions:"]
-                         [:td (:insertions statistic)]]
-                    [:tr [:td "Deletions:"]
-                         [:td (:deletions statistic)]]
-                    [:tr [:td "Changed files:"]
-                         [:td (:files_changed statistic)]]
-                ]
+                [:div {:class "panel panel-primary"}
+                    [:div {:class "panel-heading"}
+                        "Summary for 2015"]
+                    [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
+                        [:tr [:td "Commits:"]
+                             [:td (:commits_count statistic)]]
+                        [:tr [:td "Insertions:"]
+                             [:td (:insertions statistic)]]
+                        [:tr [:td "Deletions:"]
+                             [:td (:deletions statistic)]]
+                        [:tr [:td "Changed files:"]
+                             [:td (:files_changed statistic)]]
+                    ]]
                 [:h3 "Week stat"]
                 (flotr/line-chart "weeks statistic" "800px" "300px" week-graph-data
                                   :horizontal-lines true
@@ -161,26 +170,29 @@
                                   :vertical-lines true
                                   :show-legend true
                                   :legend-positon "sw")
-                [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
-                    [:tr [:th {:colspan 3} "Week statistic"]]
-                    [:tr [:th "Week"] [:th "From"] [:th "To"] [:th {:colspan "4"} "Statistic"]]
-                    [:tr [:th "&nbsp;"] [:th "&nbsp;"] [:th "&nbsp;"]
-                         [:th "Commits"]
-                         [:th "Files"]
-                         [:th "Insertions"]
-                         [:th "Deletions"]]
-                (for [week-stat weeks-stat]
-                    [:tr
-                         (if (= (str (:week week-stat)) selected-week) {:style "background-color:yellow"})
-                         (week-td author-name week-stat (:week week-stat))
-                         (week-td author-name week-stat (:first-day week-stat))
-                         (week-td author-name week-stat (:last-day week-stat))
-                         [:td {:style "text-align:right"} (:commits-count (:stat-for-author week-stat))]
-                         [:td {:style "text-align:right"} (:files-changed (:stat-for-author week-stat))]
-                         [:td {:style "text-align:right"} (:insertions (:stat-for-author week-stat))]
-                         [:td {:style "text-align:right"} (:deletions (:stat-for-author week-stat))]
-                     ])
-                ]
+                [:br]
+                [:div {:class "panel panel-primary"}
+                    [:div {:class "panel-heading"}
+                        "Week statistic"]
+                    [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
+                        [:tr [:th "Week"] [:th "From"] [:th "To"] [:th {:colspan "4"} "Statistic"]]
+                        [:tr [:th "&nbsp;"] [:th "&nbsp;"] [:th "&nbsp;"]
+                             [:th "Commits"]
+                             [:th "Files"]
+                             [:th "Insertions"]
+                             [:th "Deletions"]]
+                    (for [week-stat weeks-stat]
+                        [:tr
+                             (if (= (str (:week week-stat)) selected-week) {:style "background-color:yellow"})
+                             (week-td author-name week-stat (:week week-stat))
+                             (week-td author-name week-stat (:first-day week-stat))
+                             (week-td author-name week-stat (:last-day week-stat))
+                             [:td {:style "text-align:right"} (:commits-count (:stat-for-author week-stat))]
+                             [:td {:style "text-align:right"} (:files-changed (:stat-for-author week-stat))]
+                             [:td {:style "text-align:right"} (:insertions (:stat-for-author week-stat))]
+                             [:td {:style "text-align:right"} (:deletions (:stat-for-author week-stat))]
+                         ])
+                    ]]
                 [:br][:br][:br][:br]
                 (render-html-footer)
             ] ; </div class="container">
@@ -196,8 +208,10 @@
                 (render-navigation-bar-section)
                 [:h1 (str "Author: " author-name)]
                 [:h3 (str "Status for week: " selected-week)]
+                [:div {:class "panel panel-primary"}
+                    [:div {:class "panel-heading"}
+                        "Week statistic"]
                 [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
-                    [:tr [:th {:colspan 3} "Week statistic"]]
                     [:tr [:th "Product"] [:th "Repository"] [:th "Commits"] [:th "Files"] [:th "Insertions"] [:th "Deletions"]]
                 (for [s (:statistic-for-week stat-for-week)]
                     [:tr
@@ -208,7 +222,7 @@
                          [:td (:insertions s)]
                          [:td (:deletions s)]
                      ])
-                ]
+                ]]
                 [:br][:br][:br][:br]
                 (render-html-footer)
             ] ; </div class="container">
@@ -226,17 +240,20 @@
                 [:h3 (str "Status for week: " selected-week)]
                 [:h3 (str "Product " product)]
                 [:h3 (str "Repository: " repo)]
-                [:br][:br][:br][:br]
-                [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
-                    [:tr [:th "Date"] [:th "Message"] [:th "sha"]]
-                (for [c (:commits-for-week stat-for-week) :when (and (= repo (:repo c))
-                                                                     (= product (:product c)))]
-                    [:tr
-                         [:td (:date c)]
-                         [:td (:message c)]
-                         [:td (:sha c)]
-                     ])
-                ]
+                [:br]
+                [:div {:class "panel panel-primary"}
+                    [:div {:class "panel-heading"}
+                        "Commits"]
+                    [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
+                        [:tr [:th "Date"] [:th "Message"] [:th "sha"]]
+                    (for [c (:commits-for-week stat-for-week) :when (and (= repo (:repo c))
+                                                                         (= product (:product c)))]
+                        [:tr
+                             [:td (:date c)]
+                             [:td (:message c)]
+                             [:td (:sha c)]
+                         ])
+                ]]
                 (render-html-footer)
             ] ; </div class="container">
         ] ; </body>
