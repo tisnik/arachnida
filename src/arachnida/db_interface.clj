@@ -59,6 +59,13 @@
                                 :insertions insertions
                                 :deletions deletions}))
 
+(defn read-autor-names
+    []
+    (jdbc/query db-spec/data-db
+                               ["select author
+                                 from commits
+                                 group by author order by author"]))
+
 (defn read-authors
     []
     (jdbc/query db-spec/data-db
