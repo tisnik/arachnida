@@ -80,7 +80,7 @@
     ))
 
 (defn render-product-page
-    [product-name repositories]
+    [product-name repositories statistic product-repo]
     (page/xhtml
         (render-html-header)
         [:body
@@ -93,6 +93,33 @@
                             [:td (:name repository)]
                             [:td (:url  repository)]])
                 ]
+                [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
+                    [:tr [:th {:colspan 2} "Summary for 2015"]]
+                    [:tr [:td "Commits:"]
+                         [:td (:commits_count statistic)]]
+                    [:tr [:td "Insertions:"]
+                         [:td (:insertions statistic)]]
+                    [:tr [:td "Deletions:"]
+                         [:td (:deletions statistic)]]
+                    [:tr [:td "Changed files:"]
+                         [:td (:files_changed statistic)]]
+                ]
+                [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
+                    [:tr [:th {:colspan 5} "Per repository statistic"]]
+                    [:tr [:th "Repository"] [:th {:colspan "4"} "Statistic"]]
+                    [:tr [:th "&nbsp;"]
+                         [:th "Commits"]
+                         [:th "Files"]
+                         [:th "Insertions"]
+                         [:th "Deletions"]]
+                    (for [pr product-repo]
+                        [:tr [:td (:reponame pr)]
+                             [:td (:commits_count pr)]
+                             [:td (:files_changed pr)]
+                             [:td (:insertions pr)]
+                             [:td (:deletions pr)]
+                        ]
+                    )]
                 [:br][:br][:br][:br]
                 (render-html-footer)
             ] ; </div class="container">
