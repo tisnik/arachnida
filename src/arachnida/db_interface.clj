@@ -118,6 +118,7 @@
 (defn read-statistic-for-week-from-db
     [first-day last-day author]
     (jdbc/query db-spec/data-db ["select repo,
+                                         (select name from products where products.id=commits.product) as product,
                                          (select name from repos where repos.id=commits.repo) as reponame,
                                          count(*) as commits,
                                          sum(files_changed) as files,
@@ -127,7 +128,7 @@
                                  where date between ? and ?
                                    and author=?
                                  group by repo
-                                 order by repo" first-day last-day author]))
+                                 order by product, repo" first-day last-day author]))
 
 (defn read-commits-for-week
     [first-day last-day author]
