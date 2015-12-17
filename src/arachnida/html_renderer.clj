@@ -91,7 +91,7 @@
                     (for [repository repositories]
                         [:tr
                             [:td (:name repository)]
-                            [:td (:url repository)]])
+                            [:td (:url  repository)]])
                 ]
                 [:br][:br][:br][:br]
                 (render-html-footer)
@@ -152,6 +152,33 @@
                          [:td {:style "text-align:right"} (:files-changed (:stat-for-author week-stat))]
                          [:td {:style "text-align:right"} (:insertions (:stat-for-author week-stat))]
                          [:td {:style "text-align:right"} (:deletions (:stat-for-author week-stat))]
+                     ])
+                ]
+                [:br][:br][:br][:br]
+                (render-html-footer)
+            ] ; </div class="container">
+        ] ; </body>
+    ))
+
+(defn render-author-week-page
+    [author-name selected-week stat-for-week]
+    (page/xhtml
+        (render-html-header)
+        [:body
+            [:div {:class "container"}
+                (render-navigation-bar-section)
+                [:h1 (str "Author: " author-name)]
+                [:h3 (str "Status for week: " selected-week)]
+                [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
+                    [:tr [:th {:colspan 3} "Week statistic"]]
+                    [:tr [:th "Repository"] [:th "Commits"] [:th "Files"] [:th "Insertions"] [:th "Deletions"]]
+                (for [s (:statistic-for-week stat-for-week)]
+                    [:tr
+                         [:td (:reponame s)]
+                         [:td (:commits s)]
+                         [:td (:files s)]
+                         [:td (:insertions s)]
+                         [:td (:deletions s)]
                      ])
                 ]
                 [:br][:br][:br][:br]
