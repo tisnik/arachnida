@@ -15,11 +15,17 @@
                                   from   products
                                   order  by name;"))
 
+(defn read-product-id
+    [product-name]
+    (:id (first (jdbc/query db-spec/data-db ["select id
+                                              from products
+                                              where name=?" product-name]))))
+
 (defn read-repo-list
     [product-id]
     (jdbc/query db-spec/data-db ["select id, name, url
                                   from   repos
-                                  where  product=? order by id;" product-id]))
+                                  where  product=? order by name;" product-id]))
 
 (defn read-commit-id
     [db product repo sha]
@@ -59,11 +65,12 @@
                                 :insertions insertions
                                 :deletions deletions}))
 
-(defn read-autor-names
+(defn read-author-names
     []
     (jdbc/query db-spec/data-db
                                ["select author
                                  from commits
+                                 where date between '2015-01-01' and '2015-12-31'
                                  group by author order by author"]))
 
 (defn read-authors
@@ -77,6 +84,18 @@
                                  from commits
                                  where date between '2015-01-01' and '2015-12-31'
                                  group by author order by author"]))
+
+(defn read-statistic-for-author
+    [author-name]
+    (first
+    (jdbc/query db-spec/data-db
+                               ["select count(*) as commits_count,
+                                        sum(files_changed) as files_changed,
+                                        sum(insertions) as insertions,
+                                        sum(deletions) as deletions
+                                 from commits
+                                 where date between '2015-01-01' and '2015-12-31'
+                                 and author=?" author-name])))
 
 (defn read-stat-per-weeks-from-db
     [first-day last-day]
