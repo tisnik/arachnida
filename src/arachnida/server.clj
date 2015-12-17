@@ -323,17 +323,51 @@
         (-> (html-renderer/render-product-page product-name repositories)
             continue-processing)))
 
+(defn update-file-name
+    [file-name]
+    (if (.startsWith file-name "/")
+        (subs file-name 1)
+        file-name))
+
+(defn return-file
+    [file-name content-type]
+    (let [file (new java.io.File "www" (update-file-name file-name))]
+        (println "Returning file " (.getAbsolutePath file))
+        (if (.exists file)
+            (-> (http-response/response file)
+                (http-response/content-type content-type))
+            (println "return-file(): can not access file: " (.getName file)))))
+
+(defn return-icon
+    [uri]
+    (return-file uri "image/x-icon"))
+
+(defn return-css
+    [uri]
+    (return-file uri "text/css"))
+
+(defn return-javascript
+    [uri]
+    (return-file uri "application/javascript"))
+
 (defn handler
     "Handler that is called by Ring for all requests received from user(s)."
     [request]
     (println "request URI: " (request :uri))
     (let [uri (request :uri)]
         (condp = uri
-            "/"            (perform-index-page request)
-            "/author"      (perform-author-page request)
-            "/product"     (perform-product-page request)
-            "/favicon.ico" nil
-        )))
+            "/"                                 (perform-index-page request)
+            "/author"                           (perform-author-page request)
+            "/product"                          (perform-product-page request)
+            "/favicon.ico"                      (return-icon uri)
+            "/bootstrap.min.css"                (return-css uri)
+            "/arachnida.css"                    (return-css uri)
+            "/bootstrap.min.js"                 (return-javascript uri)
+            "/flotr/lib/prototype-1.6.0.2.js"   (return-javascript uri)
+            "/flotr/lib/canvas2image.js"        (return-javascript uri)
+            "/flotr/lib/canvastext.js"          (return-javascript uri)
+            "/flotr/flotr-0.2.0-alpha.js"       (return-javascript uri)
+            "/flotr/flotr.debug-0.2.0-alpha.js" (return-javascript uri))))
 
 (def app
     (-> handler
