@@ -3,6 +3,7 @@
 (require '[hiccup.core         :as hiccup])
 (require '[hiccup.page         :as page])
 (require '[hiccup.form         :as form])
+(require '[clj-flotr.generator :as flotr])
 
 (require '[arachnida.config    :as config])
 
@@ -98,8 +99,12 @@
         ] ; </body>
     ))
 
+(defn week-td
+    [selected-author week-stat data]
+    [:td [:a {:href (str "/author-week?name=" selected-author "&week=" (:week week-stat))} data]])
+
 (defn render-author-page
-    [author-name statistic]
+    [author-name statistic weeks-stat selected-week week-graph-data cummulative-graph-data]
     (page/xhtml
         (render-html-header)
         [:body
@@ -116,6 +121,38 @@
                          [:td (:deletions statistic)]]
                     [:tr [:td "Changed files:"]
                          [:td (:files_changed statistic)]]
+                ]
+                [:h3 "Week stat"]
+                (flotr/line-chart "weeks statistic" "800px" "300px" week-graph-data
+                                  :horizontal-lines true
+                                  :vertical-lines true
+                                  :show-legend true
+                                  :legend-positon "sw")
+                [:h3 "Cummulative"]
+                (flotr/line-chart "cummulative statistic" "800px" "300px" cummulative-graph-data
+                                  :horizontal-lines true
+                                  :vertical-lines true
+                                  :show-legend true
+                                  :legend-positon "sw")
+                [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
+                    [:tr [:th {:colspan 3} "Week statistic"]]
+                    [:tr [:th "Week"] [:th "From"] [:th "To"] [:th {:colspan "4"} "Statistic"]]
+                    [:tr [:th "&nbsp;"] [:th "&nbsp;"] [:th "&nbsp;"]
+                         [:th "Commits"]
+                         [:th "Files"]
+                         [:th "Insertions"]
+                         [:th "Deletions"]]
+                (for [week-stat weeks-stat]
+                    [:tr
+                         (if (= (str (:week week-stat)) selected-week) {:style "background-color:yellow"})
+                         (week-td author-name week-stat (:week week-stat))
+                         (week-td author-name week-stat (:first-day week-stat))
+                         (week-td author-name week-stat (:last-day week-stat))
+                         [:td {:style "text-align:right"} (:commits-count (:stat-for-author week-stat))]
+                         [:td {:style "text-align:right"} (:files-changed (:stat-for-author week-stat))]
+                         [:td {:style "text-align:right"} (:insertions (:stat-for-author week-stat))]
+                         [:td {:style "text-align:right"} (:deletions (:stat-for-author week-stat))]
+                     ])
                 ]
                 [:br][:br][:br][:br]
                 (render-html-footer)
