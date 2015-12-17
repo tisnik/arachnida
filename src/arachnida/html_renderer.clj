@@ -55,7 +55,7 @@
 ]); </nav>
 
 (defn render-index-page
-    []
+    [products writers]
     (page/xhtml
         (render-html-header)
         [:body
@@ -63,9 +63,13 @@
                 (render-navigation-bar-section)
                 [:h1 "Products"]
                 [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
+                    (for [product products]
+                        [:tr [:td [:a {:href (str "/product?name=" (:name product)) } (:name product)]]])
                 ]
                 [:h1 "Writers"]
                 [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
+                    (for [writer writers]
+                        [:tr [:td [:a {:href (str "/author?name=" (:author writer)) } (:author writer)]]])
                 ]
                 [:br][:br][:br][:br]
                 (render-html-footer)
