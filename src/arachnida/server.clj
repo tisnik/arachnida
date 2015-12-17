@@ -8,8 +8,9 @@
 (require '[hiccup.page :as page])
 (require '[hiccup.form :as form])
 
-(require '[arachnida.db-interface :as db-interface])
-(require '[arachnida.calendar     :as calendar])
+(require '[arachnida.config        :as config])
+(require '[arachnida.db-interface  :as db-interface])
+(require '[arachnida.calendar      :as calendar])
 (require '[arachnida.html-renderer :as html-renderer])
 
 (defn read-stat-per-weeks
@@ -279,14 +280,38 @@
          (-> (html-renderer/render-index-page products authors)
              continue-processing)))
 
+(defn get-data
+    [weeks-stat who what]
+    (for [week-stat weeks-stat]
+        [(:week week-stat) (get (get week-stat who) what)]))
+
+(defn get-cummulative-data
+    [weeks-stat who what]
+    (println weeks-stat)
+    (for [week-stat weeks-stat]
+        [(:week week-stat)
+         (apply + (for [week-stat2 weeks-stat :while (<= (:week week-stat2) (:week week-stat))]
+             (get (get week-stat2 who) what 0)))]))
+
 (defn perform-author-page
     [request]
     (let [params (:params request)
           author-name (get params "name")
-          statistic   (db-interface/read-statistic-for-author author-name)]
-(println author-name)
-(println statistic)
-        (-> (html-renderer/render-author-page author-name statistic)
+          statistic   (db-interface/read-statistic-for-author author-name)
+          last-week       (calendar/get-week (calendar/get-calendar))
+          weeks-stat      (get-weeks-stat last-week author-name)
+          stat-for-week   (read-stat-for-week last-week author-name)
+          week-graph-data [{:values (get-data weeks-stat :stat-for-author :commits-count) :label "Commits"}
+                           {:values (get-data weeks-stat :stat-for-author :files-changed) :label "Files changed"}
+                           {:values (get-data weeks-stat :stat-for-author :deletions) :label "Deletions"}
+                           {:values (get-data weeks-stat :stat-for-author :insertions) :label "Insertions"}]
+          cummulative-graph-data
+                          [{:values (get-cummulative-data weeks-stat :stat-for-author :commits-count) :label "Commits"}
+                           {:values (get-cummulative-data weeks-stat :stat-for-author :files-changed) :label "Files changed"}
+                           {:values (get-cummulative-data weeks-stat :stat-for-author :deletions) :label "Deletions"}
+                           {:values (get-cummulative-data weeks-stat :stat-for-author :insertions) :label "Insertions"}]
+          ]
+        (-> (html-renderer/render-author-page author-name statistic weeks-stat last-week week-graph-data cummulative-graph-data)
             continue-processing)))
 
 (defn perform-product-page
@@ -317,5 +342,6 @@
 
 (defn start-server
     []
+    (config/load-configuration)
     (jetty/run-jetty app {:port 8080}))
 
