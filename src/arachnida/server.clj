@@ -324,6 +324,19 @@
         (-> (html-renderer/render-author-week-page author-name selected-week stat-for-week)
             continue-processing)))
 
+(defn perform-author-week-repo-page
+    [request]
+    (let [params          (:params request)
+          author-name     (get params "name")
+          selected-week   (get params "week")
+          product         (get params "product")
+          repo            (get params "repo")
+          weeks-stat      (get-weeks-stat (Integer/parseInt selected-week) author-name)
+          stat-for-week   (read-stat-for-week selected-week author-name)
+          ]
+        (-> (html-renderer/render-author-week-repo-page author-name selected-week stat-for-week product repo)
+            continue-processing)))
+
 (defn perform-product-page
     [request]
     (let [params (:params request)
@@ -369,6 +382,7 @@
             "/"                                 (perform-index-page request)
             "/author"                           (perform-author-page request)
             "/author-week"                      (perform-author-week-page request)
+            "/author-week-repo"                 (perform-author-week-repo-page request)
             "/product"                          (perform-product-page request)
             "/favicon.ico"                      (return-icon uri)
             "/bootstrap.min.css"                (return-css uri)
