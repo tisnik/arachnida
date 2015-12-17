@@ -10,6 +10,7 @@
 
 (require '[arachnida.db-interface :as db-interface])
 (require '[arachnida.calendar     :as calendar])
+(require '[arachnida.html-renderer :as html-renderer])
 
 (defn read-stat-per-weeks
     [first-day last-day]
@@ -243,7 +244,7 @@
            :stat-for-all stat-for-all
            :stat-for-author stat-for-author})))
 
-(defn handler
+(defn handler-
     [request]
     (let [params          (:params  request)
           cookies         (:cookies request)
@@ -266,10 +267,53 @@
               (println "Outgoing cookies: " (get response :cookies))
               response)))
 
+(defn continue-processing
+    [html-output]
+    (-> (http-response/response html-output)
+        (http-response/content-type "text/html; charset=utf-8")))
+
+(defn perform-index-page
+    [request]
+    (let [products (db-interface/read-product-names)
+          authors  (db-interface/read-author-names)]
+         (-> (html-renderer/render-index-page products authors)
+             continue-processing)))
+
+(defn perform-author-page
+    [request]
+    (let [params (:params request)
+          author-name (get params "name")
+          statistic   (db-interface/read-statistic-for-author author-name)]
+(println author-name)
+(println statistic)
+        (-> (html-renderer/render-author-page author-name statistic)
+            continue-processing)))
+
+(defn perform-product-page
+    [request]
+    (let [params (:params request)
+          product-name (get params "name")
+          product-id   (db-interface/read-product-id product-name)
+          repositories (db-interface/read-repo-list product-id)]
+        (-> (html-renderer/render-product-page product-name repositories)
+            continue-processing)))
+
+(defn handler
+    "Handler that is called by Ring for all requests received from user(s)."
+    [request]
+    (println "request URI: " (request :uri))
+    (let [uri (request :uri)]
+        (condp = uri
+            "/"            (perform-index-page request)
+            "/author"      (perform-author-page request)
+            "/product"     (perform-product-page request)
+            "/favicon.ico" nil
+        )))
+
 (def app
     (-> handler
         cookies/wrap-cookies
-        http-params/wrap-params))
+        (http-params/wrap-params :encoding "UTF-8")))
 
 (defn start-server
     []
