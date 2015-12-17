@@ -337,13 +337,24 @@
         (-> (html-renderer/render-author-week-repo-page author-name selected-week stat-for-week product repo)
             continue-processing)))
 
+(defn read-stat-for-product
+    [product-id]
+    (db-interface/read-statistic-for-product product-id))
+
+(defn read-stat-for-product-repo
+    [product-id]
+    (db-interface/read-statistic-for-product-repo product-id))
+
 (defn perform-product-page
     [request]
     (let [params (:params request)
           product-name (get params "name")
           product-id   (db-interface/read-product-id product-name)
-          repositories (db-interface/read-repo-list product-id)]
-        (-> (html-renderer/render-product-page product-name repositories)
+          repositories (db-interface/read-repo-list product-id)
+          last-week    (calendar/get-week (calendar/get-calendar))
+          product-stat (read-stat-for-product product-id)
+          product-repo (read-stat-for-product-repo product-id)]
+        (-> (html-renderer/render-product-page product-name repositories product-stat product-repo)
             continue-processing)))
 
 (defn update-file-name
