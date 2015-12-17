@@ -300,7 +300,6 @@
           statistic   (db-interface/read-statistic-for-author author-name)
           last-week       (calendar/get-week (calendar/get-calendar))
           weeks-stat      (get-weeks-stat last-week author-name)
-          stat-for-week   (read-stat-for-week last-week author-name)
           week-graph-data [{:values (get-data weeks-stat :stat-for-author :commits-count) :label "Commits"}
                            {:values (get-data weeks-stat :stat-for-author :files-changed) :label "Files changed"}
                            {:values (get-data weeks-stat :stat-for-author :deletions) :label "Deletions"}
@@ -312,6 +311,17 @@
                            {:values (get-cummulative-data weeks-stat :stat-for-author :insertions) :label "Insertions"}]
           ]
         (-> (html-renderer/render-author-page author-name statistic weeks-stat last-week week-graph-data cummulative-graph-data)
+            continue-processing)))
+
+(defn perform-author-week-page
+    [request]
+    (let [params          (:params request)
+          author-name     (get params "name")
+          selected-week   (get params "week")
+          weeks-stat      (get-weeks-stat (Integer/parseInt selected-week) author-name)
+          stat-for-week   (read-stat-for-week selected-week author-name)
+          ]
+        (-> (html-renderer/render-author-week-page author-name selected-week stat-for-week)
             continue-processing)))
 
 (defn perform-product-page
@@ -358,6 +368,7 @@
         (condp = uri
             "/"                                 (perform-index-page request)
             "/author"                           (perform-author-page request)
+            "/author-week"                      (perform-author-week-page request)
             "/product"                          (perform-product-page request)
             "/favicon.ico"                      (return-icon uri)
             "/bootstrap.min.css"                (return-css uri)
