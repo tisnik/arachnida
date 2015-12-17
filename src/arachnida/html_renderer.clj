@@ -171,17 +171,45 @@
                 [:h3 (str "Status for week: " selected-week)]
                 [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
                     [:tr [:th {:colspan 3} "Week statistic"]]
-                    [:tr [:th "Repository"] [:th "Commits"] [:th "Files"] [:th "Insertions"] [:th "Deletions"]]
+                    [:tr [:th "Product"] [:th "Repository"] [:th "Commits"] [:th "Files"] [:th "Insertions"] [:th "Deletions"]]
                 (for [s (:statistic-for-week stat-for-week)]
                     [:tr
-                         [:td (:reponame s)]
-                         [:td (:commits s)]
+                         [:td (:product s)]
+                         [:td [:a {:href (str "/author-week-repo?name=" author-name "&week=" selected-week "&product=" (:product s) "&repo=" (:reponame s)) } (:reponame s)]]
+                         [:td [:a {:href (str "/author-week-repo?name=" author-name "&week=" selected-week "&product=" (:product s) "&repo=" (:reponame s)) } (:commits s)]]
                          [:td (:files s)]
                          [:td (:insertions s)]
                          [:td (:deletions s)]
                      ])
                 ]
                 [:br][:br][:br][:br]
+                (render-html-footer)
+            ] ; </div class="container">
+        ] ; </body>
+    ))
+
+(defn render-author-week-repo-page
+    [author-name selected-week stat-for-week product repo]
+    (page/xhtml
+        (render-html-header)
+        [:body
+            [:div {:class "container"}
+                (render-navigation-bar-section)
+                [:h1 (str "Author: " author-name)]
+                [:h3 (str "Status for week: " selected-week)]
+                [:h3 (str "Product " product)]
+                [:h3 (str "Repository: " repo)]
+                [:br][:br][:br][:br]
+                [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
+                    [:tr [:th "Date"] [:th "Message"] [:th "sha"]]
+                (for [c (:commits-for-week stat-for-week) :when (and (= repo (:repo c))
+                                                                     (= product (:product c)))]
+                    [:tr
+                         [:td (:date c)]
+                         [:td (:message c)]
+                         [:td (:sha c)]
+                     ])
+                ]
                 (render-html-footer)
             ] ; </div class="container">
         ] ; </body>
