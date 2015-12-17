@@ -97,6 +97,31 @@
                                  where date between '2015-01-01' and '2015-12-31'
                                  and author=?" author-name])))
 
+(defn read-statistic-for-product
+    [product-id]
+    (first
+    (jdbc/query db-spec/data-db
+                               ["select count(*) as commits_count,
+                                        sum(files_changed) as files_changed,
+                                        sum(insertions) as insertions,
+                                        sum(deletions) as deletions
+                                 from commits
+                                 where date between '2015-01-01' and '2015-12-31'
+                                 and product=?" product-id])))
+
+(defn read-statistic-for-product-repo
+    [product-id]
+    (jdbc/query db-spec/data-db
+                               ["select count(*) as commits_count,
+                                        (select name from repos where repos.id=commits.repo) as reponame,
+                                        sum(files_changed) as files_changed,
+                                        sum(insertions) as insertions,
+                                        sum(deletions) as deletions
+                                 from commits
+                                 where date between '2015-01-01' and '2015-12-31'
+                                 and product=?
+                                 group by reponame" product-id]))
+
 (defn read-stat-per-weeks-from-db
     [first-day last-day]
     (jdbc/query db-spec/data-db ["select count(*) as commits_count,
