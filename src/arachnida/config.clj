@@ -23,6 +23,9 @@
 (def url-to-common-files
     (atom nil))
 
+(def mailto
+    (atom nil))
+
 (defn load-repositories
     "Load repositories from the provided INI file."
     []
@@ -33,5 +36,6 @@
     []
     (let [cfg (clojure-ini/read-ini config-ini-file :keywordize? true)
           settings (:settings cfg)]
-        (reset! url-to-common-files (:url-to-common-files settings))))
+        (reset! url-to-common-files (:url-to-common-files settings))
+        (reset! mailto (:mailto settings))))
 

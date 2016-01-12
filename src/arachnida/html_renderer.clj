@@ -39,8 +39,11 @@
 
 (defn render-html-footer
     "Renders part of HTML page - the footer."
-    []
-    [:div (str "<br /><br /><br /><br />Author: Pavel Tisnovsky &lt;&gt;&nbsp;&nbsp;&nbsp;"
+    [mailto]
+    [:div (str "<br /><br /><br /><br />Author: Pavel Tisnovsky "
+        (if mailto
+            (str "&lt;<a href='mailto:" mailto "'>" mailto "</a>&gt;"))
+          "&nbsp;&nbsp;&nbsp;"
           "<br />")])
 
 (defn render-navigation-bar-section
@@ -69,7 +72,7 @@
 ]); </nav>
 
 (defn render-index-page
-    [products writers]
+    [products writers mailto]
     (page/xhtml
         (render-html-header)
         [:body
@@ -86,7 +89,7 @@
                         [:tr [:td [:a {:href (str "/author?name=" (:author writer)) } (:author writer)]]])
                 ]
                 [:br][:br][:br][:br]
-                (render-html-footer)
+                (render-html-footer mailto)
             ] ; </div class="container">
         ] ; </body>
     ))

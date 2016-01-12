@@ -289,7 +289,7 @@
     [request]
     (let [products (db-interface/read-product-names)
           authors  (db-interface/read-author-names)]
-         (-> (html-renderer/render-index-page products authors)
+         (-> (html-renderer/render-index-page products authors @config/mailto)
              continue-processing)))
 
 (defn get-data
