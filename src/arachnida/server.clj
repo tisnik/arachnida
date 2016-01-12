@@ -20,9 +20,10 @@
 (require '[hiccup.page :as page])
 (require '[hiccup.form :as form])
 
+(require '[clj-calendar.calendar :as calendar])
+
 (require '[arachnida.config        :as config])
 (require '[arachnida.db-interface  :as db-interface])
-(require '[arachnida.calendar      :as calendar])
 (require '[arachnida.html-renderer :as html-renderer])
 
 (defn read-stat-per-weeks
@@ -322,7 +323,7 @@
                            {:values (get-cummulative-data weeks-stat :stat-for-author :deletions) :label "Deletions"}
                            {:values (get-cummulative-data weeks-stat :stat-for-author :insertions) :label "Insertions"}]
           ]
-        (-> (html-renderer/render-author-page author-name statistic weeks-stat last-week week-graph-data cummulative-graph-data)
+        (-> (html-renderer/render-author-page author-name statistic weeks-stat last-week week-graph-data cummulative-graph-data @config/mailto)
             continue-processing)))
 
 (defn perform-author-week-page
@@ -333,7 +334,7 @@
           weeks-stat      (get-weeks-stat (Integer/parseInt selected-week) author-name)
           stat-for-week   (read-stat-for-week selected-week author-name)
           ]
-        (-> (html-renderer/render-author-week-page author-name selected-week stat-for-week)
+        (-> (html-renderer/render-author-week-page author-name selected-week stat-for-week @config/mailto)
             continue-processing)))
 
 (defn perform-author-week-repo-page
@@ -346,7 +347,7 @@
           weeks-stat      (get-weeks-stat (Integer/parseInt selected-week) author-name)
           stat-for-week   (read-stat-for-week selected-week author-name)
           ]
-        (-> (html-renderer/render-author-week-repo-page author-name selected-week stat-for-week product repo)
+        (-> (html-renderer/render-author-week-repo-page author-name selected-week stat-for-week product repo @config/mailto)
             continue-processing)))
 
 (defn read-stat-for-product
@@ -366,7 +367,7 @@
           last-week    (calendar/get-week (calendar/get-calendar))
           product-stat (read-stat-for-product product-id)
           product-repo (read-stat-for-product-repo product-id)]
-        (-> (html-renderer/render-product-page product-name repositories product-stat product-repo)
+        (-> (html-renderer/render-product-page product-name repositories product-stat product-repo @config/mailto)
             continue-processing)))
 
 (defn update-file-name

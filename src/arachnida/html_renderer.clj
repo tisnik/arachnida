@@ -95,7 +95,7 @@
     ))
 
 (defn render-product-page
-    [product-name repositories statistic product-repo]
+    [product-name repositories statistic product-repo mailto]
     (page/xhtml
         (render-html-header)
         [:body
@@ -143,7 +143,7 @@
                             ]
                         )]]
                 [:br][:br][:br][:br]
-                (render-html-footer)
+                (render-html-footer mailto)
             ] ; </div class="container">
         ] ; </body>
     ))
@@ -153,7 +153,7 @@
     [:td [:a {:href (str "/author-week?name=" selected-author "&week=" (:week week-stat))} data]])
 
 (defn render-author-page
-    [author-name statistic weeks-stat selected-week week-graph-data cummulative-graph-data]
+    [author-name statistic weeks-stat selected-week week-graph-data cummulative-graph-data mailto]
     (page/xhtml
         (render-html-header)
         [:body
@@ -209,13 +209,13 @@
                          ])
                     ]]
                 [:br][:br][:br][:br]
-                (render-html-footer)
+                (render-html-footer mailto)
             ] ; </div class="container">
         ] ; </body>
     ))
 
 (defn render-author-week-page
-    [author-name selected-week stat-for-week]
+    [author-name selected-week stat-for-week mailto]
     (page/xhtml
         (render-html-header)
         [:body
@@ -239,13 +239,13 @@
                      ])
                 ]]
                 [:br][:br][:br][:br]
-                (render-html-footer)
+                (render-html-footer mailto)
             ] ; </div class="container">
         ] ; </body>
     ))
 
 (defn render-author-week-repo-page
-    [author-name selected-week stat-for-week product repo]
+    [author-name selected-week stat-for-week product repo mailto]
     (page/xhtml
         (render-html-header)
         [:body
@@ -269,7 +269,7 @@
                              [:td (:sha c)]
                          ])
                 ]]
-                (render-html-footer)
+                (render-html-footer mailto)
             ] ; </div class="container">
         ] ; </body>
     ))
