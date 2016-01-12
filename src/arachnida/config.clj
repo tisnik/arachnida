@@ -26,6 +26,9 @@
 (def mailto
     (atom nil))
 
+(def port
+    (atom nil))
+
 (defn load-repositories
     "Load repositories from the provided INI file."
     []
@@ -37,5 +40,6 @@
     (let [cfg (clojure-ini/read-ini config-ini-file :keywordize? true)
           settings (:settings cfg)]
         (reset! url-to-common-files (:url-to-common-files settings))
-        (reset! mailto (:mailto settings))))
+        (reset! mailto (:mailto settings))
+        (reset! port (Integer/parseInt (-> cfg :server :port)))))
 

@@ -425,5 +425,5 @@
 (defn start-server
     []
     (config/load-configuration)
-    (jetty/run-jetty app {:port 8080}))
+    (jetty/run-jetty app {:port @config/port}))
 

@@ -10,7 +10,7 @@
 ;      Pavel Tisnovsky
 ;
 
-(ns arachnida.core)
+(ns arachnida.core  (:gen-class))
 
 (require '[clojure.tools.cli      :as cli])
 
