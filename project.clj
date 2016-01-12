@@ -25,6 +25,7 @@
                    [ring/ring-jetty-adapter "1.3.2"]
                    [clojure-ini "0.0.1"]
                    [org.clojars.tisnik/clj-flotr "0.2.0-SNAPSHOT"]
+                   [org.clojars.tisnik/clj-calendar "0.1.0-SNAPSHOT"]
                    [hiccup "1.0.4"]]
     :dev-dependencies [[lein-ring "0.8.10"]]
     :plugins [[lein-ring "0.8.10"]]
