@@ -35,6 +35,9 @@
 (def end-year
     (atom nil))
 
+(def config-loaded
+    (atom nil))
+
 (defn load-repositories
     "Load repositories from the provided INI file."
     []
@@ -43,12 +46,14 @@
 (defn load-configuration
     "Load configuration from the provided INI file."
     []
-    (let [cfg (clojure-ini/read-ini config-ini-file :keywordize? true)]
-        (reset! url-to-common-files (-> cfg :settings :url_to_common_files))
-        (reset! mailto     (-> cfg :settings :mailto))
-        (reset! port       (Integer/parseInt (-> cfg :server :port)))
-        (reset! start-year (Integer/parseInt (-> cfg :calendar :start_year)))
-        (reset! end-year   (Integer/parseInt (-> cfg :calendar :end_year)))))
+    (if (not @config-loaded)
+        (let [cfg (clojure-ini/read-ini config-ini-file :keywordize? true)]
+            (reset! url-to-common-files (-> cfg :settings :url_to_common_files))
+            (reset! mailto     (-> cfg :settings :mailto))
+            (reset! port       (Integer/parseInt (-> cfg :server :port)))
+            (reset! start-year (Integer/parseInt (-> cfg :calendar :start_year)))
+            (reset! end-year   (Integer/parseInt (-> cfg :calendar :end_year)))
+            (reset! config-loaded true))))
 
 (defn print-configuration
     "Prints actual configuration to the standard output."
