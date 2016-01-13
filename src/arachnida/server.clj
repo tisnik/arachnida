@@ -55,9 +55,9 @@
             (for [commit commits] (db-interface/read-branches-for-commit (:id commit)))))
 
 (defn read-stat-for-week
-    [week author]
+    [year week author]
     (if (and week author)
-        (let [calendar  (calendar/get-calendar-for-week 2015 (Integer. week))
+        (let [calendar  (calendar/get-calendar-for-week (Integer. year) (Integer. week))
               first-day (calendar/get-first-day-of-week-formatted calendar)
               last-day  (calendar/get-last-day-of-week-formatted calendar)]
               (let [statistic-for-week  (db-interface/read-statistic-for-week-from-db first-day last-day author)
@@ -309,8 +309,8 @@
 (defn perform-author-page
     [request]
     (let [params (:params request)
-          author-name (get params "name")
-          statistic   (db-interface/read-statistic-for-author author-name)
+          author-name     (get params "name")
+          statistic       (db-interface/read-statistic-for-author author-name)
           last-week       (calendar/get-week (calendar/get-calendar))
           weeks-stat      (get-weeks-stat last-week author-name)
           week-graph-data [{:values (get-data weeks-stat :stat-for-author :commits-count) :label "Commits"}
@@ -331,7 +331,8 @@
     (let [params          (:params request)
           author-name     (get params "name")
           selected-week   (get params "week")
-          weeks-stat      (get-weeks-stat (Integer/parseInt selected-week) author-name)
+          selected-year   (get params "year")
+          weeks-stat      (get-weeks-stat (Integer/parseInt selected-year) (Integer/parseInt selected-week) author-name)
           stat-for-week   (read-stat-for-week selected-week author-name)
           ]
         (-> (html-renderer/render-author-week-page author-name selected-week stat-for-week @config/mailto)
@@ -342,9 +343,10 @@
     (let [params          (:params request)
           author-name     (get params "name")
           selected-week   (get params "week")
+          selected-year   (get params "year")
           product         (get params "product")
           repo            (get params "repo")
-          weeks-stat      (get-weeks-stat (Integer/parseInt selected-week) author-name)
+          weeks-stat      (get-weeks-stat (Integer/parseInt selected-year) (Integer/parseInt selected-week) author-name)
           stat-for-week   (read-stat-for-week selected-week author-name)
           ]
         (-> (html-renderer/render-author-week-repo-page author-name selected-week stat-for-week product repo @config/mailto)
@@ -426,5 +428,6 @@
 (defn start-server
     []
     (config/load-configuration)
+    (config/print-configuration)
     (jetty/run-jetty app {:port @config/port}))
 

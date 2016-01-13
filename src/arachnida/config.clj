@@ -44,9 +44,22 @@
     "Load configuration from the provided INI file."
     []
     (let [cfg (clojure-ini/read-ini config-ini-file :keywordize? true)]
-        (reset! url-to-common-files (-> cfg :settings :url-to-common-files))
+        (reset! url-to-common-files (-> cfg :settings :url_to_common_files))
         (reset! mailto     (-> cfg :settings :mailto))
         (reset! port       (Integer/parseInt (-> cfg :server :port)))
         (reset! start-year (Integer/parseInt (-> cfg :calendar :start_year)))
         (reset! end-year   (Integer/parseInt (-> cfg :calendar :end_year)))))
+
+(defn print-configuration
+    "Prints actual configuration to the standard output."
+    []
+    (println "[[Configuration]]")
+    (println "[Settings]")
+    (println "URL to common files: " @url-to-common-files)
+    (println "Mailto:              " @mailto)
+    (println "[Server]")
+    (println "Port: " @port)
+    (println "[Calendar]")
+    (println "Start year: " @start-year)
+    (println "End year:   " @end-year))
 
