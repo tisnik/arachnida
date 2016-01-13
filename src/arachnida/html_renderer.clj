@@ -99,8 +99,8 @@
     [:td {:style "text-align:right"} (or (get (val s) k) "0")])
 
 (defn url-to-repo-page
-    [repository]
-    [:a {:href (str "/repository?name=" repository)} repository])
+    [product-name repository]
+    [:a {:href (str "/repository?product=" product-name "&repository=" repository)} repository])
 
 (defn url-to-gitlab
     [url]
@@ -121,7 +121,7 @@
                     [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
                         (for [repository repositories]
                             [:tr
-                                [:td (url-to-repo-page (:name repository))]
+                                [:td (url-to-repo-page product-name (:name repository))]
                                 [:td (url-to-gitlab (:url  repository))]])
                     ]]
                 [:div {:class "panel panel-primary"}
