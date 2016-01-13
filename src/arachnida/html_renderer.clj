@@ -98,6 +98,15 @@
     [s k]
     [:td {:style "text-align:right"} (or (get (val s) k) "0")])
 
+(defn url-to-repo-page
+    [repository]
+    [:a {:href (str "/repository?name=" repository)} repository])
+
+(defn url-to-gitlab
+    [url]
+    (let [url2 (subs url (inc (.indexOf url ":")))]
+    [:a {:href (str "http://gitlab.cee.redhat.com/" url2)} url]))
+
 (defn render-product-page
     [product-name repositories statistic mailto]
     (page/xhtml
@@ -112,8 +121,8 @@
                     [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
                         (for [repository repositories]
                             [:tr
-                                [:td (:name repository)]
-                                [:td (:url  repository)]])
+                                [:td (url-to-repo-page (:name repository))]
+                                [:td (url-to-gitlab (:url  repository))]])
                     ]]
                 [:div {:class "panel panel-primary"}
                     [:div {:class "panel-heading"}
