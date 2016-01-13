@@ -27,17 +27,14 @@
    ["-c" "--config"  "display current configuration" :id :config]])
 
 (defn show-help
-    []
+    [summary]
     (println "Usage:")
-    (println "-h" "--help      help")
-    (println "-g" "--git       fetch GIT statistic")
-    (println "-s" "--server    run as HTTP server")
-    (println "-c" "--config    display current configuration"))
+    (println summary))
 
 (defn show-error
-    []
+    [summary]
     (println "Unknown command line option!")
-    (show-help))
+    (show-help summary))
 
 (defn display-configuration
     []
@@ -52,9 +49,9 @@
           git?           (options :git)
           server?        (options :server)
           config?        (options :config)]
-        (cond show-help? (show-help)
+        (cond show-help? (show-help (:summary all-options))
               git?       (git-data-fetcher/process)
               server?    (server/start-server)
               config?    (display-configuration)
-              :else      (show-error))))
+              :else      (show-error (:summary all-options)))))
 
