@@ -94,8 +94,12 @@
         ] ; </body>
     ))
 
+(defn render-value
+    [s k]
+    [:td {:style "text-align:right"} (or (get (val s) k) "0")])
+
 (defn render-product-page
-    [product-name repositories statistic product-repo mailto]
+    [product-name repositories statistic mailto]
     (page/xhtml
         (render-html-header)
         [:body
@@ -113,35 +117,42 @@
                     ]]
                 [:div {:class "panel panel-primary"}
                     [:div {:class "panel-heading"}
-                        "Summary for 2015"]
+                        "Summary for all repositories"]
                     [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
-                        [:tr [:td "Commits:"]
-                             [:td (:commits_count statistic)]]
-                        [:tr [:td "Insertions:"]
-                             [:td (:insertions statistic)]]
-                        [:tr [:td "Deletions:"]
-                             [:td (:deletions statistic)]]
-                        [:tr [:td "Changed files:"]
-                             [:td (:files_changed statistic)]]
+                        [:tr [:th "Year"]
+                             (for [s statistic]
+                                  [:th {:style "width:12ex;text-align:right"} (key s)])]
+                        [:tr [:th "Commits:"]
+                             (for [s statistic]
+                                  (render-value s :commits_count))]
+                        [:tr [:th "Insertions:"]
+                             (for [s statistic]
+                                  (render-value s :insertions))]
+                        [:tr [:th "Deletions:"]
+                             (for [s statistic]
+                                  (render-value s :deletions))]
+                        [:tr [:th "Changed files:"]
+                             (for [s statistic]
+                                  (render-value s :files_changed))]
                     ]]
-                [:div {:class "panel panel-primary"}
-                    [:div {:class "panel-heading"}
-                        "Per repository statistic"]
-                    [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
-                        [:tr [:th "Repository"] [:th {:colspan "4"} "Statistic"]]
-                        [:tr [:th "&nbsp;"]
-                             [:th "Commits"]
-                             [:th "Files"]
-                             [:th "Insertions"]
-                             [:th "Deletions"]]
-                        (for [pr product-repo]
-                            [:tr [:td (:reponame pr)]
-                                 [:td (:commits_count pr)]
-                                 [:td (:files_changed pr)]
-                                 [:td (:insertions pr)]
-                                 [:td (:deletions pr)]
-                            ]
-                        )]]
+;               [:div {:class "panel panel-primary"}
+;                   [:div {:class "panel-heading"}
+;                       "Per repository statistic"]
+;                   [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
+;                       [:tr [:th "Repository"] [:th {:colspan "4"} "Statistic"]]
+;                       [:tr [:th "&nbsp;"]
+;                            [:th "Commits"]
+;                            [:th "Files"]
+;                            [:th "Insertions"]
+;                            [:th "Deletions"]]
+;                       (for [pr product-repo]
+;                           [:tr [:td (:reponame pr)]
+;                                [:td (:commits_count pr)]
+;                                [:td (:files_changed pr)]
+;                                [:td (:insertions pr)]
+;                                [:td (:deletions pr)]
+;                           ]
+;                       )]]
                 [:br][:br][:br][:br]
                 (render-html-footer mailto)
             ] ; </div class="container">

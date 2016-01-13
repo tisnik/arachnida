@@ -352,13 +352,25 @@
         (-> (html-renderer/render-author-week-repo-page author-name selected-week stat-for-week product repo @config/mailto)
             continue-processing)))
 
+(defn start-of-year
+    [year]
+    (str year "-01-01"))
+
+(defn end-of-year
+    [year]
+    (str year "-12-31"))
+
 (defn read-stat-for-product
-    [product-id]
-    (db-interface/read-statistic-for-product product-id))
+    [product-id start-year end-year]
+    (into (sorted-map)
+        (for [year (range start-year (inc end-year))]
+            [year (db-interface/read-statistic-for-product product-id (start-of-year year) (end-of-year year))])))
 
 (defn read-stat-for-product-repo
-    [product-id]
-    (db-interface/read-statistic-for-product-repo product-id))
+    [product-id start-year end-year]
+    (into (sorted-map)
+        (for [year (range start-year (inc end-year))]
+            [year (db-interface/read-statistic-for-product-repo product-id (start-of-year year) (end-of-year year))])))
 
 (defn perform-product-page
     [request]
@@ -366,10 +378,9 @@
           product-name (get params "name")
           product-id   (db-interface/read-product-id product-name)
           repositories (db-interface/read-repo-list product-id)
-          last-week    (calendar/get-week (calendar/get-calendar))
-          product-stat (read-stat-for-product product-id)
-          product-repo (read-stat-for-product-repo product-id)]
-        (-> (html-renderer/render-product-page product-name repositories product-stat product-repo @config/mailto)
+          product-stat (read-stat-for-product      product-id @config/start-year @config/end-year)]
+          ;product-repo (read-stat-for-product-repo product-id @config/start-year @config/end-year)]
+        (-> (html-renderer/render-product-page product-name repositories product-stat @config/mailto)
             continue-processing)))
 
 (defn update-file-name
@@ -402,6 +413,7 @@
 (defn handler
     "Handler that is called by Ring for all requests received from user(s)."
     [request]
+    (config/load-configuration)
     (println "request URI: " (request :uri))
     (let [uri (request :uri)]
         (condp = uri
