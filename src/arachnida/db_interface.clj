@@ -110,7 +110,7 @@
                                  and author=?" author-name])))
 
 (defn read-statistic-for-product
-    [product-id]
+    [product-id from to]
     (first
     (jdbc/query db-spec/data-db
                                ["select count(*) as commits_count,
@@ -118,11 +118,11 @@
                                         sum(insertions) as insertions,
                                         sum(deletions) as deletions
                                  from commits
-                                 where date between '2015-01-01' and '2015-12-31'
-                                 and product=?" product-id])))
+                                 where date between ? and ?
+                                 and product=?" from to product-id])))
 
 (defn read-statistic-for-product-repo
-    [product-id]
+    [product-id from to]
     (jdbc/query db-spec/data-db
                                ["select count(*) as commits_count,
                                         (select name from repos where repos.id=commits.repo) as reponame,
@@ -130,9 +130,9 @@
                                         sum(insertions) as insertions,
                                         sum(deletions) as deletions
                                  from commits
-                                 where date between '2015-01-01' and '2015-12-31'
+                                 where date between ? and ?
                                  and product=?
-                                 group by reponame" product-id]))
+                                 group by reponame" from to product-id]))
 
 (defn read-stat-per-weeks-from-db
     [first-day last-day]
