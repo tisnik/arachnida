@@ -225,7 +225,7 @@
                 [:h1 (str "Author: " author-name)]
                 [:div {:class "panel panel-primary"}
                     [:div {:class "panel-heading"}
-                        "Summary for 2015"]
+                        "Summary"]
                     [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
                         [:tr [:td "Commits:"]
                              [:td (:commits_count statistic)]]
