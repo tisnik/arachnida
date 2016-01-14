@@ -108,7 +108,7 @@
     [:a {:href (str "http://gitlab.cee.redhat.com/" url2)} url]))
 
 (defn render-product-page
-    [product-name repositories statistic mailto]
+    [product-name repositories statistic mailto year-graph-data-1 year-graph-data-2]
     (page/xhtml
         (render-html-header)
         [:body
@@ -144,6 +144,18 @@
                              (for [s statistic]
                                   (render-value s :files_changed))]
                     ]]
+                    [:h2 "Commits"]
+                    (flotr/line-chart "year commits" "800px" "300px" year-graph-data-1
+                                      :horizontal-lines true
+                                      :vertical-lines true
+                                      :show-legend true
+                                      :legend-positon "sw")
+                    [:h2 "Insertions, deletions and file changed"]
+                    (flotr/line-chart "year statistic" "800px" "300px" year-graph-data-2
+                                      :horizontal-lines true
+                                      :vertical-lines true
+                                      :show-legend true
+                                      :legend-positon "sw")
                 [:br][:br][:br][:br]
                 (render-html-footer mailto)
             ] ; </div class="container">

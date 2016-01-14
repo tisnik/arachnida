@@ -384,9 +384,13 @@
           product-name (get params "name")
           product-id   (db-interface/read-product-id product-name)
           repositories (db-interface/read-repo-list product-id)
-          product-stat (read-stat-for-product      product-id @config/start-year @config/end-year)]
+          product-stat (read-stat-for-product      product-id @config/start-year @config/end-year)
+          year-graph-data-1 [{:values (get-year-data product-stat :commits_count) :label "Commits"}]
+          year-graph-data-2 [{:values (get-year-data product-stat :files_changed) :label "Files changed"}
+                             {:values (get-year-data product-stat :insertions)    :label "Insertions"}
+                             {:values (get-year-data product-stat :deletions)     :label "Deletions"}]]
           ;product-repo (read-stat-for-product-repo product-id @config/start-year @config/end-year)]
-        (-> (html-renderer/render-product-page product-name repositories product-stat @config/mailto)
+        (-> (html-renderer/render-product-page product-name repositories product-stat @config/mailto year-graph-data-1 year-graph-data-2)
             continue-processing)))
 
 (defn get-year-data
