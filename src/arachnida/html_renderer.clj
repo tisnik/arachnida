@@ -144,24 +144,44 @@
                              (for [s statistic]
                                   (render-value s :files_changed))]
                     ]]
-;               [:div {:class "panel panel-primary"}
-;                   [:div {:class "panel-heading"}
-;                       "Per repository statistic"]
-;                   [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
-;                       [:tr [:th "Repository"] [:th {:colspan "4"} "Statistic"]]
-;                       [:tr [:th "&nbsp;"]
-;                            [:th "Commits"]
-;                            [:th "Files"]
-;                            [:th "Insertions"]
-;                            [:th "Deletions"]]
-;                       (for [pr product-repo]
-;                           [:tr [:td (:reponame pr)]
-;                                [:td (:commits_count pr)]
-;                                [:td (:files_changed pr)]
-;                                [:td (:insertions pr)]
-;                                [:td (:deletions pr)]
-;                           ]
-;                       )]]
+                [:br][:br][:br][:br]
+                (render-html-footer mailto)
+            ] ; </div class="container">
+        ] ; </body>
+    ))
+
+(defn render-repository-page
+    [product-name repository-name statistic mailto]
+(println statistic)
+    (page/xhtml
+        (render-html-header)
+        [:body
+            [:div {:class "container"}
+                (render-navigation-bar-section)
+                [:h1 (str "Product: " product-name)]
+                [:h2 (str "Repository: " repository-name)]
+                [:br]
+                [:br]
+                [:div {:class "panel panel-primary"}
+                    [:div {:class "panel-heading"}
+                        "Statistic for repository"]
+                    [:table {:class "table table-condensed table-hover table-bordered" :rules "all"}
+                        [:tr [:th "Year"]
+                        (for [s statistic]
+                             [:th {:style "width:12ex;text-align:right"} (key s)])]
+                        [:tr [:th "Commits:"]
+                             (for [s statistic]
+                                  (render-value s :commits_count))]
+                        [:tr [:th "Insertions:"]
+                             (for [s statistic]
+                                  (render-value s :insertions))]
+                        [:tr [:th "Deletions:"]
+                             (for [s statistic]
+                                  (render-value s :deletions))]
+                        [:tr [:th "Changed files:"]
+                             (for [s statistic]
+                                  (render-value s :files_changed))]
+                    ]]
                 [:br][:br][:br][:br]
                 (render-html-footer mailto)
             ] ; </div class="container">
