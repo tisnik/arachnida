@@ -372,6 +372,12 @@
         (for [year (range start-year (inc end-year))]
             [year (db-interface/read-statistic-for-product-repo product-id (start-of-year year) (end-of-year year))])))
 
+(defn read-stat-for-product-and-repo
+    [product-id repository-name start-year end-year]
+    (into (sorted-map)
+        (for [year (range start-year (inc end-year))]
+            [year (db-interface/read-statistic-for-product-and-repo product-id repository-name (start-of-year year) (end-of-year year))])))
+
 (defn perform-product-page
     [request]
     (let [params (:params request)
@@ -381,6 +387,16 @@
           product-stat (read-stat-for-product      product-id @config/start-year @config/end-year)]
           ;product-repo (read-stat-for-product-repo product-id @config/start-year @config/end-year)]
         (-> (html-renderer/render-product-page product-name repositories product-stat @config/mailto)
+            continue-processing)))
+
+(defn perform-repository-page
+    [request]
+    (let [params (:params request)
+          product-name    (get params "product")
+          repository-name (get params "repository")
+          product-id      (db-interface/read-product-id product-name)
+          repo-stat       (read-stat-for-product-and-repo product-id repository-name @config/start-year @config/end-year)]
+        (-> (html-renderer/render-repository-page product-name repository-name repo-stat @config/mailto)
             continue-processing)))
 
 (defn update-file-name
@@ -422,6 +438,7 @@
             "/author-week"                      (perform-author-week-page request)
             "/author-week-repo"                 (perform-author-week-repo-page request)
             "/product"                          (perform-product-page request)
+            "/repository"                       (perform-repository-page request)
             "/favicon.ico"                      (return-icon uri)
             "/bootstrap.min.css"                (return-css uri)
             "/arachnida.css"                    (return-css uri)
