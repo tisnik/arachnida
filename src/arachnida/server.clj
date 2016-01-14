@@ -409,7 +409,6 @@
           year-graph-data-2 [{:values (get-year-data repo-stat :files_changed) :label "Files changed"}
                              {:values (get-year-data repo-stat :insertions)    :label "Insertions"}
                              {:values (get-year-data repo-stat :deletions)     :label "Deletions"}]]
-(println year-graph-data-2)
         (-> (html-renderer/render-repository-page product-name repository-name repo-stat @config/mailto year-graph-data-1 year-graph-data-2)
             continue-processing)))
 
