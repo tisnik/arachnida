@@ -389,14 +389,24 @@
         (-> (html-renderer/render-product-page product-name repositories product-stat @config/mailto)
             continue-processing)))
 
+(defn get-year-data
+    [stat what]
+    (for [s stat]
+        [(key s) (or (get (val s) what) 0)]))
+
 (defn perform-repository-page
     [request]
     (let [params (:params request)
           product-name    (get params "product")
           repository-name (get params "repository")
           product-id      (db-interface/read-product-id product-name)
-          repo-stat       (read-stat-for-product-and-repo product-id repository-name @config/start-year @config/end-year)]
-        (-> (html-renderer/render-repository-page product-name repository-name repo-stat @config/mailto)
+          repo-stat       (read-stat-for-product-and-repo product-id repository-name @config/start-year @config/end-year)
+          year-graph-data-1 [{:values (get-year-data repo-stat :commits_count) :label "Commits"}]
+          year-graph-data-2 [{:values (get-year-data repo-stat :files_changed) :label "Files changed"}
+                             {:values (get-year-data repo-stat :insertions)    :label "Insertions"}
+                             {:values (get-year-data repo-stat :deletions)     :label "Deletions"}]]
+(println year-graph-data-2)
+        (-> (html-renderer/render-repository-page product-name repository-name repo-stat @config/mailto year-graph-data-1 year-graph-data-2)
             continue-processing)))
 
 (defn update-file-name

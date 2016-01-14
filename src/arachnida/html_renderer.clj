@@ -151,8 +151,7 @@
     ))
 
 (defn render-repository-page
-    [product-name repository-name statistic mailto]
-(println statistic)
+    [product-name repository-name statistic mailto year-graph-data-1 year-graph-data-2]
     (page/xhtml
         (render-html-header)
         [:body
@@ -182,6 +181,18 @@
                              (for [s statistic]
                                   (render-value s :files_changed))]
                     ]]
+                    [:h2 "Commits"]
+                    (flotr/line-chart "year commits" "800px" "300px" year-graph-data-1
+                                      :horizontal-lines true
+                                      :vertical-lines true
+                                      :show-legend true
+                                      :legend-positon "sw")
+                    [:h2 "Insertions, deletions and file changed"]
+                    (flotr/line-chart "year statistic" "800px" "300px" year-graph-data-2
+                                      :horizontal-lines true
+                                      :vertical-lines true
+                                      :show-legend true
+                                      :legend-positon "sw")
                 [:br][:br][:br][:br]
                 (render-html-footer mailto)
             ] ; </div class="container">
