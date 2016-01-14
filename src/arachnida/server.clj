@@ -26,6 +26,37 @@
 (require '[arachnida.db-interface  :as db-interface])
 (require '[arachnida.html-renderer :as html-renderer])
 
+(defn start-of-year
+    [year]
+    (str year "-01-01"))
+
+(defn end-of-year
+    [year]
+    (str year "-12-31"))
+
+(defn read-stat-for-product
+    [product-id start-year end-year]
+    (into (sorted-map)
+        (for [year (range start-year (inc end-year))]
+            [year (db-interface/read-statistic-for-product product-id (start-of-year year) (end-of-year year))])))
+
+(defn read-stat-for-product-repo
+    [product-id start-year end-year]
+    (into (sorted-map)
+        (for [year (range start-year (inc end-year))]
+            [year (db-interface/read-statistic-for-product-repo product-id (start-of-year year) (end-of-year year))])))
+
+(defn read-stat-for-product-and-repo
+    [product-id repository-name start-year end-year]
+    (into (sorted-map)
+        (for [year (range start-year (inc end-year))]
+            [year (db-interface/read-statistic-for-product-and-repo product-id repository-name (start-of-year year) (end-of-year year))])))
+
+(defn get-year-data
+    [stat what]
+    (for [s stat]
+        [(key s) (or (get (val s) what) 0)]))
+
 (defn read-stat-per-weeks
     [first-day last-day]
     (let [stat (first
@@ -310,7 +341,7 @@
     [request]
     (let [params (:params request)
           author-name     (get params "name")
-          statistic       (db-interface/read-statistic-for-author author-name)
+          statistic       (db-interface/read-statistic-for-author author-name )
           last-week       (calendar/get-week (calendar/get-calendar))
           weeks-stat      (get-weeks-stat last-week author-name)
           week-graph-data [{:values (get-data weeks-stat :stat-for-author :commits-count) :label "Commits"}
@@ -352,32 +383,6 @@
         (-> (html-renderer/render-author-week-repo-page author-name selected-week stat-for-week product repo @config/mailto)
             continue-processing)))
 
-(defn start-of-year
-    [year]
-    (str year "-01-01"))
-
-(defn end-of-year
-    [year]
-    (str year "-12-31"))
-
-(defn read-stat-for-product
-    [product-id start-year end-year]
-    (into (sorted-map)
-        (for [year (range start-year (inc end-year))]
-            [year (db-interface/read-statistic-for-product product-id (start-of-year year) (end-of-year year))])))
-
-(defn read-stat-for-product-repo
-    [product-id start-year end-year]
-    (into (sorted-map)
-        (for [year (range start-year (inc end-year))]
-            [year (db-interface/read-statistic-for-product-repo product-id (start-of-year year) (end-of-year year))])))
-
-(defn read-stat-for-product-and-repo
-    [product-id repository-name start-year end-year]
-    (into (sorted-map)
-        (for [year (range start-year (inc end-year))]
-            [year (db-interface/read-statistic-for-product-and-repo product-id repository-name (start-of-year year) (end-of-year year))])))
-
 (defn perform-product-page
     [request]
     (let [params (:params request)
@@ -392,11 +397,6 @@
           ;product-repo (read-stat-for-product-repo product-id @config/start-year @config/end-year)]
         (-> (html-renderer/render-product-page product-name repositories product-stat @config/mailto year-graph-data-1 year-graph-data-2)
             continue-processing)))
-
-(defn get-year-data
-    [stat what]
-    (for [s stat]
-        [(key s) (or (get (val s) what) 0)]))
 
 (defn perform-repository-page
     [request]
