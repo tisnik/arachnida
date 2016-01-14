@@ -134,6 +134,20 @@
                                  and product=?
                                  group by reponame" from to product-id]))
 
+(defn read-statistic-for-product-and-repo
+    [product-id repository-name from to]
+    (first
+    (jdbc/query db-spec/data-db
+                               ["select count(*) as commits_count,
+                                        (select name from repos where repos.id=commits.repo) as reponame,
+                                        sum(files_changed) as files_changed,
+                                        sum(insertions) as insertions,
+                                        sum(deletions) as deletions
+                                 from commits
+                                 where date between ? and ?
+                                 and product=?
+                                 and reponame=?" from to product-id repository-name])))
+
 (defn read-stat-per-weeks-from-db
     [first-day last-day]
     (jdbc/query db-spec/data-db ["select count(*) as commits_count,
