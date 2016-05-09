@@ -14,4 +14,21 @@
   (:require [clojure.test :refer :all]
             [arachnida.commits-stat :refer :all]))
 
+;
+; Common functions used by tests.
+;
+
+(defn callable?
+    "Test if given function-name is bound to the real function."
+    [function-name]
+    (clojure.test/function? function-name))
+
+;
+; Tests for various functions
+;
+
+(deftest test-parse-sha-existence
+    "Check that the arachnida.commits-stat/parse-sha definition exists."
+    (testing "if the arachnida.commits-stat/parse-sha definition exists."
+        (is (callable? 'arachnida.commits-stat/parse-sha))))
 
